@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bicho por Perto</title>
+    <!-- Leaflet CSS (CDN) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    
+    <!-- App CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <header class="topbar">
+        <div class="brand">
+            <img src="assets/logo.svg" alt="Logo" class="logo-icon" />
+            <img src="assets/logo-txt.svg" alt="Bicho por Perto" class="logo-text" />
+        </div>
+        <div class="controls">
+            <button id="refreshBtn" title="Voltar para minha localização">
+                <img src="assets/pin.svg" alt="Minha localização" class="icon" />
+            </button>
+        </div>
+    </header>
+    <main class="app">
+        <div id="mapContainer">
+            <div id="map"></div>
+            <div id="locationBadge" class="location-badge" hidden> <span id="locationName">Local</span> </div> <button
+                id="searchHereBtn"
+                style="display:none; position:absolute; top:10px; right:10px; z-index:1000; padding:6px 12px; background:#2e7d32; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                🔍 Procurar aqui </button>
+        </div>
+        <div class="control-panel"> <label for="radiusRange">Raio: <strong id="radiusLabel">3 km</strong></label> <input
+                type="range" id="radiusRange" min="1" max="20" step="1" value="3">
+            <div id="status" class="status">Aguardando localização...</div>
+        </div>
+        <section id="cardsSection" class="cards-section">
+            <h2>Espécies por aqui</h2>
+            <div id="cards" class="cards" aria-live="polite"></div>
+        </section>
+        <div id="fallback" class="fallback" hidden> </div>
+    </main>
+    <footer class="footer"> <small> Projeto criado para Coding Mobile. Desenvolvedor: Renato Delgado. Fonte de dados:
+            iNaturalist API. </small> </footer>
+    <!-- Leaflet JS (CDN) -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <!-- App JS -->
+    <script src="app.js" defer></script>
+</body>
+
+</html>
