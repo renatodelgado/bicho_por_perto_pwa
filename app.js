@@ -291,36 +291,3 @@ centerMarker.on('dragend', () => {
     }
   }, 100);
 });
-
-let deferredPrompt; // Variável para armazenar o evento beforeinstallprompt
-
-// Escuta o evento beforeinstallprompt
-window.addEventListener('beforeinstallprompt', (e) => {
-  // Impede que o navegador mostre o prompt automaticamente
-  e.preventDefault();
-  // Armazena o evento para usá-lo mais tarde
-  deferredPrompt = e;
-  // Opcional: Mostre o botão de instalação (caso esteja escondido)
-  document.getElementById('installBtn').style.display = 'block';
-});
-
-// Adiciona o evento de clique ao botão
-document.getElementById('installBtn').addEventListener('click', () => {
-  // Verifica se o evento beforeinstallprompt foi capturado
-  if (deferredPrompt) {
-    // Mostra o prompt de instalação
-    deferredPrompt.prompt();
-    // Aguarda a resposta do usuário
-    deferredPrompt.userChoice.then((choiceResult) => {
-      if (choiceResult.outcome === 'accepted') {
-        console.log('Usuário aceitou instalar o PWA');
-      } else {
-        console.log('Usuário recusou instalar o PWA');
-      }
-      // Limpa o evento após o uso
-      deferredPrompt = null;
-    });
-  } else {
-    console.log('O prompt de instalação não está disponível');
-  }
-});
