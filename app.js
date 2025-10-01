@@ -6,6 +6,7 @@ let currentPosition = null;
 let userCircle = null;
 let centerMarker = null;
 let lastCenter = null;
+let deferredPrompt;
 
 const statusEl = document.getElementById('status');
 const radiusRange = document.getElementById('radiusRange');
@@ -170,7 +171,6 @@ function onPositionSuccess(pos) {
   locationName.textContent = 'Sua localização';
   fallbackEl.hidden = true;
 
-  // Circle de raio
   if (!userCircle) {
     userCircle = L.circle([lat, lng], {
       radius: Number(radiusRange.value) * 1000,
@@ -184,13 +184,34 @@ function onPositionSuccess(pos) {
     userCircle.setRadius(Number(radiusRange.value) * 1000);
   }
 
-  // Marcador de centro de mapa
   if (!centerMarker) {
     centerMarker = L.marker([lat, lng], { draggable: true, opacity: 0.8 }).addTo(map);
+    // Attach dragend event listener here
+    centerMarker.on('dragend', () => {
+      const popupContent = `<button id="popupSearchBtn" style="
+        padding:6px 12px; 
+        background:#2e7d32; 
+        color:#fff; 
+        border:none; 
+        border-radius:4px; 
+        cursor:pointer;">🔍 Procurar aqui</button>`;
+
+      centerMarker.bindPopup(popupContent).openPopup();
+
+      setTimeout(() => {
+        const btn = document.getElementById('popupSearchBtn');
+        if (btn) {
+          btn.addEventListener('click', () => {
+            const pos = centerMarker.getLatLng();
+            doSearch(pos.lat, pos.lng, Number(radiusRange.value));
+            centerMarker.closePopup();
+          });
+        }
+      }, 100);
+    });
   } else {
     centerMarker.setLatLng([lat, lng]);
   }
-
 
   doSearch(lat, lng, Number(radiusRange.value));
 }
@@ -272,27 +293,27 @@ centerMarker.on('dragend', () => {
   }, 100);
 });
 
-let deferredPrompt;
 
-window.addEventListener("beforeinstallprompt", (e) => {
-  // evita o banner automático
+
+const installButton = document.getElementById('installBtn');
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  console.log('beforeinstallprompt event fired');
   e.preventDefault();
   deferredPrompt = e;
-  
-  // mostra o botão
-  const installBtn = document.getElementById("installBtn");
-  installBtn.style.display = "inline-block";
-
-  installBtn.addEventListener("click", async () => {
-    installBtn.style.display = "none"; // esconde após clique
-    
-    // mostra o prompt nativo
-    deferredPrompt.prompt();
-    
-    const { outcome } = await deferredPrompt.userChoice;
-    console.log(`Usuário escolheu: ${outcome}`); // accepted / dismissed
-    
-    deferredPrompt = null;
-  });
+  installButton.style.display = 'block';
+  console.log('Install button should now be visible');
 });
 
+installButton.addEventListener('click', async () => {
+  console.log('Install button clicked');
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    console.log(`User response to install prompt: ${outcome}`);
+    deferredPrompt = null;
+    installButton.style.display = 'none';
+  } else {
+    console.log('No deferredPrompt available');
+  }
+});
