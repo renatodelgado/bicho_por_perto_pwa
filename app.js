@@ -19,7 +19,19 @@ const searchHereBtn = document.getElementById('searchHereBtn');
 radiusLabel.textContent = `${DEFAULT_RADIUS} km`;
 radiusRange.value = DEFAULT_RADIUS;
 
-// -------------------- INIT MAP --------------------
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("sw.js")
+      .then(reg => {
+        console.log("Service Worker registrado com sucesso:", reg.scope);
+      })
+      .catch(err => {
+        console.error("Falha ao registrar o Service Worker:", err);
+      });
+  });
+}
+
+
 function initMap() {
   map = L.map('map').setView([0, 0], 2);
 
@@ -284,15 +296,3 @@ window.addEventListener("beforeinstallprompt", (e) => {
   });
 });
 
-// Registro do Service Worker
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("sw.js")
-      .then(reg => {
-        console.log("Service Worker registrado com sucesso:", reg.scope);
-      })
-      .catch(err => {
-        console.error("Falha ao registrar o Service Worker:", err);
-      });
-  });
-}
