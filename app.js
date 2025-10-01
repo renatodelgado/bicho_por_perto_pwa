@@ -260,4 +260,27 @@ centerMarker.on('dragend', () => {
   }, 100);
 });
 
+let deferredPrompt;
+
+window.addEventListener("beforeinstallprompt", (e) => {
+  // evita o banner automático
+  e.preventDefault();
+  deferredPrompt = e;
+  
+  // mostra o botão
+  const installBtn = document.getElementById("installBtn");
+  installBtn.style.display = "inline-block";
+
+  installBtn.addEventListener("click", async () => {
+    installBtn.style.display = "none"; // esconde após clique
+    
+    // mostra o prompt nativo
+    deferredPrompt.prompt();
+    
+    const { outcome } = await deferredPrompt.userChoice;
+    console.log(`Usuário escolheu: ${outcome}`); // accepted / dismissed
+    
+    deferredPrompt = null;
+  });
+});
 

@@ -18,10 +18,16 @@
             <img src="assets/logo-txt.svg" alt="Bicho por Perto" class="logo-text" />
         </div>
         <div class="controls">
-            <button id="refreshBtn" title="Voltar para minha localização">
-                <img src="assets/pin.svg" alt="Minha localização" class="icon" />
-            </button>
-        </div>
+    <button id="installBtn">
+        <img src="assets/download-fill.svg" alt="Baixar app" class="icon" />
+        <span class="btn-label">Instale o app</span>
+    </button>
+
+    <button id="refreshBtn">
+        <img src="assets/pin.svg" alt="Minha localização" class="icon" />
+        <span class="btn-label">Minha localização</span>
+    </button>
+</div>
     </header>
     <main class="app">
         <div id="mapContainer">
@@ -45,7 +51,7 @@
             iNaturalist API. </small> </footer>
     <!-- Leaflet JS (CDN) -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    
+
     <!-- App JS -->
     <script src="app.js" defer></script>
 </body>
