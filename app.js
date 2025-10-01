@@ -6,7 +6,6 @@ let currentPosition = null;
 let userCircle = null;
 let centerMarker = null;
 let lastCenter = null;
-let deferredPrompt;
 
 const statusEl = document.getElementById('status');
 const radiusRange = document.getElementById('radiusRange');
@@ -293,27 +292,35 @@ centerMarker.on('dragend', () => {
   }, 100);
 });
 
+let deferredPrompt; // Variável para armazenar o evento beforeinstallprompt
 
-
-const installButton = document.getElementById('installBtn');
-
+// Escuta o evento beforeinstallprompt
 window.addEventListener('beforeinstallprompt', (e) => {
-  console.log('beforeinstallprompt event fired');
+  // Impede que o navegador mostre o prompt automaticamente
   e.preventDefault();
+  // Armazena o evento para usá-lo mais tarde
   deferredPrompt = e;
-  installButton.style.display = 'block';
-  console.log('Install button should now be visible');
+  // Opcional: Mostre o botão de instalação (caso esteja escondido)
+  document.getElementById('installBtn').style.display = 'block';
 });
 
-installButton.addEventListener('click', async () => {
-  console.log('Install button clicked');
+// Adiciona o evento de clique ao botão
+document.getElementById('installBtn').addEventListener('click', () => {
+  // Verifica se o evento beforeinstallprompt foi capturado
   if (deferredPrompt) {
+    // Mostra o prompt de instalação
     deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    console.log(`User response to install prompt: ${outcome}`);
-    deferredPrompt = null;
-    installButton.style.display = 'none';
+    // Aguarda a resposta do usuário
+    deferredPrompt.userChoice.then((choiceResult) => {
+      if (choiceResult.outcome === 'accepted') {
+        console.log('Usuário aceitou instalar o PWA');
+      } else {
+        console.log('Usuário recusou instalar o PWA');
+      }
+      // Limpa o evento após o uso
+      deferredPrompt = null;
+    });
   } else {
-    console.log('No deferredPrompt available');
+    console.log('O prompt de instalação não está disponível');
   }
 });
